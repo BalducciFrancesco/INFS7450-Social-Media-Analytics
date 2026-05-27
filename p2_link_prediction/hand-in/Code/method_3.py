@@ -10,9 +10,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 generator = torch.Generator(device=device).manual_seed(42)
 
 class GCN(nn.Module):
-    def __init__(self, graph, node_to_row, hidden_dim, out_dim):
+    def __init__(self, g, node_to_row, hidden_dim, out_dim):
         super().__init__()
-        A = nx.to_numpy_array(graph, dtype=np.float32)
+        A = nx.to_numpy_array(g, dtype=np.float32)
         A_hat = A + np.eye(A.shape[0], dtype=np.float32)    # adjacency matrix with self-loops
 
         deg = A_hat.sum(axis=1)
@@ -44,18 +44,18 @@ class GCN(nn.Module):
         return logits
 
 
-def method_3(g_full, node_to_row, edges_test):
+def method_3(g, node_to_row, candidates):
     HID_SIZE = 64
     EMB_SIZE = 12
 
-    model = GCN(g_full, node_to_row, hidden_dim=HID_SIZE, out_dim=EMB_SIZE)
+    model = GCN(g, node_to_row, hidden_dim=HID_SIZE, out_dim=EMB_SIZE)
     model.load_state_dict(torch.load("method_3.pt"))
 
     with torch.no_grad():
         model.eval()
         scores = {
             tuple(edge): float(score)
-            for edge, score in zip(edges_test, model(torch.tensor(edges_test)).cpu().numpy().reshape(-1))
+            for edge, score in zip(candidates, model(torch.tensor(candidates)).cpu().numpy().reshape(-1))
         }
         
     return scores

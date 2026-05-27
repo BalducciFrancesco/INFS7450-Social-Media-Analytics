@@ -80,11 +80,12 @@ def binarize_scores(scores, top_k):
     return Y_pred
 
 
-def display_accuracy(scores: dict[tuple[int, int], float], top_k, Y):
+def display_accuracy(scores: dict[tuple[int, int], float], Y):
     """
     Converts a free-range score list into binary predictions and computes accuracy.
     Selecting the top-K edges as positive, where K is the number of true positive edges.
     """
+    top_k = Y.count(1)
     Y_pred = binarize_scores(list(scores.values()), top_k)
     acc = accuracy_score(Y, Y_pred)
     print(f"Accuracy: {acc:.4f}")
