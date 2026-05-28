@@ -9,7 +9,7 @@ def main():
     g_baseline, X_train, Y_train, X_val, Y_val = split_dataset(edges, g_full, non_edges)
  
     # Accuracy on validation set for method 1
-    scores = method_2(g_baseline, node_to_row, X_val)
+    scores = method_2(g_full, node_to_row, X_val)
     display_accuracy(scores, Y=Y_val)
 
     # Predictions on test set for method 1
